@@ -1,0 +1,116 @@
+
+Sub Macro2()
+'
+' Macro2 Macro
+'
+'
+Dim DataSheet As Integer
+Dim ReportSheet As Integer
+
+DataSheet = 2
+ReportSheet = 3
+
+
+    Call SelectStartAmount(DataSheet, ReportSheet)
+    Call MonthsTitle
+    Call Populate(DataSheet, ReportSheet)
+End Sub
+Sub SelectStartAmount(DataSheet As Integer, ReportSheet As Integer)
+'
+' This is to select the last amount from MonedaNacional
+' The idea is to have a start point (amount of money)
+'
+'
+  Dim InitialAmount As Double
+  InitialAmount = Sheets(DataSheet).range("G3")
+
+  Sheets(ReportSheet).Select
+  range("C35").Value = InitialAmount
+End Sub
+
+Sub MonthsTitle()
+'
+' MonthsTitle Macro
+' This should set for how many months the calculation is going to be done
+
+' This Methos also sets the InitialAmount rule for each Month as well as
+' the total calculation (add / substract) per each month
+
+'
+    range("F5").Value = "Marzo"
+    range("F6").FormulaR1C1 = "=R35C3"
+    range("F31").Formula = "=SUM(F7:F9)-SUM(F10:F30)"
+         
+    range("G5").Value = "Abril"
+    range("G6").FormulaR1C1 = "=R31C6"
+    range("G31").Formula = "=SUM(G7:G9)-SUM(G10:G30)"
+    
+    range("H5").Value = "Mayo"
+    range("H6").FormulaR1C1 = "=R31C7"
+    range("H31").Formula = "=SUM(H7:H9)-SUM(H10:H30)"
+    
+End Sub
+
+Sub Populate(DataSheet, ReportSheet)
+'
+' This method gets all the types of "Cuenta" registered in range "A7:A30"
+' And calls GetSumPerCatalogCount to get the amount corresponding to that type of account
+'
+    Dim starDate As Date
+    Dim endDate As Date
+    
+    startDate = range("E2").Value
+    endDate = range("E3").Value
+
+    Set countCatalog = range("A7:A30")
+    
+    Dim startingRow As Integer
+    startingRow = 7
+    
+    For iRow = 1 To countCatalog.Count
+        Dim countValue As String
+        countValue = Cells(startingRow, 1).Value
+        Cells(startingRow, 6).Value = GetSumPerCatalogCount(countValue)
+        startingRow = startingRow + 1
+    Next iRow
+    
+End Sub
+
+Function GetSumPerCatalogCount(catalogCount As String) As Double
+'
+' Method to sum all the values corresponding to each accountType
+'
+
+    Dim rng As String
+    rng = "B4:B41"
+    Set fecha = Sheets(2).range(rng)
+    Set cuenta = Sheets(2).range(rng)
+
+    Dim index As Integer
+    index = fecha.Count
+
+    initialRow = 4
+    initialColumn = 2
+
+    Dim total As Double
+    total = 0#
+
+    For internalRow = 1 To index
+        cellFecha = Sheets(2).Cells(initialRow, initialColumn).Value
+        cellCuenta = Sheets(2).Cells(initialRow, initialColumn + 1).Value
+        
+        Dim amountTypeColumn As Integer
+        amountTypeColumn = 6
+        If cellCuenta = "1.1" Or cellCuenta = "1.2" Or cellCuenta = "1.3" Then
+            amountTypeColumn = 5
+        End If
+        
+        If cellCuenta = catalogCount Then
+            total = total + Sheets(2).Cells(initialRow, amountTypeColumn).Value
+        End If
+        initialRow = initialRow + 1
+    Next internalRow
+    
+    GetSumPerCatalogCount = total
+End Function
+
