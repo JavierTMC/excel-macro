@@ -1,5 +1,5 @@
 
-Sub SelectStartAmount(DataSheet As Integer, ReportSheet As Integer)
+Function SelectStartAmount(DataSheet As Integer, ReportSheet As Integer)
 '
 ' This is to select the last amount from MonedaNacional
 ' The idea is to have a start point (amount of money)
@@ -10,8 +10,9 @@ Sub SelectStartAmount(DataSheet As Integer, ReportSheet As Integer)
 
   Sheets(ReportSheet).Select
   range("C35").Value = InitialAmount
-End Sub
-Sub MonthsTitle()
+End Function
+
+Function MonthsTitle()
 '
 ' MonthsTitle Macro
 ' This should set for how many months the calculation is going to be done
@@ -51,8 +52,9 @@ Sub MonthsTitle()
       tempDate = DateSerial(Year(tempDate), Month(tempDate) + 1, Day(tempDate))
     Loop
     
-End Sub
-Sub Populate(DataSheet, ReportSheet)
+End Function
+
+Function Populate(DataSheet, ReportSheet)
 '
 ' This method gets all the types of "Cuenta" registered in range "A7:A30"
 ' And calls GetSumPerCatalogCount to get the amount corresponding to that type of account
@@ -76,8 +78,4 @@ Sub Populate(DataSheet, ReportSheet)
         startingRow = startingRow + 1
     Next iRow
     
-End Sub
-
-
-
-
+End Function

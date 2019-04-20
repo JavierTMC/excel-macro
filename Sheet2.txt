@@ -35,4 +35,3 @@ Function GetSumPerCatalogCount(catalogCount As String) As Double
     
     GetSumPerCatalogCount = total
 End Function
-
