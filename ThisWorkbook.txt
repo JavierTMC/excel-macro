@@ -14,5 +14,67 @@ ReportSheet = 3
     Call Sheet3.SelectStartAmount(DataSheet, ReportSheet)
     Call Sheet3.MonthsTitle
     Call Sheet3.Populate(DataSheet, ReportSheet)
+    Call CalculateEachAccountTypeTotal
 End Sub
+
+Sub ClearData()
+'
+' This clear all the generated content
+'
+    Dim column As Integer
+    column = GetContentColumnsCount
+    
+    range("C35:C36").ClearContents
+    If column = 0 Then
+      range("F5:F31").ClearContents
+    End If
+    
+    range(Cells(5, 6), Cells(31, (6 + column))).ClearContents
+    
+    ' Clear Cargo and Abono
+    range("C7:C9").ClearContents
+    range("D10:D30").ClearContents
+    
+End Sub
+Function CalculateEachAccountTypeTotal()
+'
+' This function is to get the total amount per each account type through all months
+'
+
+Dim columnsCount As Integer
+columnsCount = GetContentColumnsCount
+
+Dim index As Integer, row As Integer, cargoColumn As Integer, abonoColmun As Integer
+cargoColumn = 3
+abonoColumn = 4
+row = 7
+
+Dim fColumn As Integer, endColumn As Integer
+fColumn = 6
+endColumn = 6 + columnsCount
+
+' Cargo rows
+For index = 0 To 2
+    Cells((row + index), cargoColumn).Value = "=SUM(" _
+    & range(Cells(row + index, fColumn), Cells(row + index, endColumn)).Address(False, False) & ")"
+Next index
+
+'Abono rows
+For index = 3 To 23
+    Cells((row + index), abonoColumn).Value = "=SUM(" _
+    & range(Cells(row + index, fColumn), Cells(row + index, endColumn)).Address(False, False) & ")"
+Next index
+
+End Function
+
+Function GetContentColumnsCount() As Integer
+
+    Dim starDate As Date
+    Dim endDate As Date
+    
+    startDate = range("E2").Value
+    endDate = range("E3").Value
+    
+    GetContentColumnsCount = DateDiff("M", startDate, endDate)
+End Function
 
