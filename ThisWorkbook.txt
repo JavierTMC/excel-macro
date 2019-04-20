@@ -1,0 +1,18 @@
+
+Sub Main()
+'
+' Main Macro
+'
+'
+Dim DataSheet As Integer
+Dim ReportSheet As Integer
+
+DataSheet = 2
+ReportSheet = 3
+
+
+    Call Sheet3.SelectStartAmount(DataSheet, ReportSheet)
+    Call Sheet3.MonthsTitle
+    Call Sheet3.Populate(DataSheet, ReportSheet)
+End Sub
+

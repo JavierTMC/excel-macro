@@ -1,0 +1,38 @@
+Function GetSumPerCatalogCount(catalogCount As String) As Double
+'
+' Method to sum all the amounts corresponding to each accountType
+'
+
+    Dim rng As String
+    rng = "B4:B41"
+    Set fecha = range(rng)
+    Set cuenta = range(rng)
+
+    Dim index As Integer
+    index = fecha.Count
+
+    initialRow = 4
+    initialColumn = 2
+
+    Dim total As Double
+    total = 0#
+
+    For internalRow = 1 To index
+        cellFecha = Cells(initialRow, initialColumn).Value
+        cellCuenta = Cells(initialRow, initialColumn + 1).Value
+        
+        Dim amountTypeColumn As Integer
+        amountTypeColumn = 6
+        If cellCuenta = "1.1" Or cellCuenta = "1.2" Or cellCuenta = "1.3" Then
+            amountTypeColumn = 5
+        End If
+        
+        If cellCuenta = catalogCount Then
+            total = total + Cells(initialRow, amountTypeColumn).Value
+        End If
+        initialRow = initialRow + 1
+    Next internalRow
+    
+    GetSumPerCatalogCount = total
+End Function
+
