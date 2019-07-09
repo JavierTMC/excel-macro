@@ -15,6 +15,8 @@ ReportSheet = 3
     Call Sheet3.MonthsTitle
     Call Sheet3.Populate(DataSheet, ReportSheet)
     Call CalculateEachAccountTypeTotal
+    'Call Sheet2.CalculateRangeForAccountType
+    
 End Sub
 
 Sub ClearData()
@@ -68,6 +70,9 @@ Next index
 End Function
 
 Function GetContentColumnsCount() As Integer
+'
+' This Function is used to know how many columns where used to put the calcualted data
+'
 
     Dim starDate As Date
     Dim endDate As Date

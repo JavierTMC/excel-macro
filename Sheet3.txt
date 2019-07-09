@@ -32,21 +32,24 @@ Function MonthsTitle()
     tempDate = startDate
     
     Do While tempDate <= endDate
+      Dim currentColumn As Integer
+      currentColumn = initialColumn + counter
+      
       ' month title
-      Cells(5, (initialColumn + counter)).Value = Format(tempDate, "mmm")
+      Cells(5, currentColumn).Value = Format(tempDate, "mmm")
       
       ' initial month amount
       If counter = 0 Then
         range("F6").FormulaR1C1 = "=R35C3"
       Else
-        Cells(6, (initialColumn + counter)).FormulaR1C1 = Cells(31, (initialColumn + counter - 1))
+        Cells(6, currentColumn).FormulaR1C1 = "=R31C" & (currentColumn - 1)
       End If
       
       ' end month amount
-      Cells(31, (initialColumn + counter)).Value = "=SUM(" _
-          & range(Cells(6, (initialColumn + counter)), Cells(9, (initialColumn + counter))).Address(False, False) & ")" _
+      Cells(31, currentColumn).Value = "=SUM(" _
+          & range(Cells(6, currentColumn), Cells(9, currentColumn)).Address(False, False) & ")" _
           & " - SUM(" _
-          & range(Cells(10, (initialColumn + counter)), Cells(30, (initialColumn + counter))).Address(False, False) & ")"
+          & range(Cells(10, currentColumn), Cells(30, currentColumn)).Address(False, False) & ")"
       
       counter = counter + 1
       tempDate = DateSerial(Year(tempDate), Month(tempDate) + 1, Day(tempDate))
@@ -60,22 +63,43 @@ Function Populate(DataSheet, ReportSheet)
 ' And calls GetSumPerCatalogCount to get the amount corresponding to that type of account
 '
 
-    Dim starDate As Date
-    Dim endDate As Date
-    
+    'we need to know for what range of dates we should populate
+    Dim starDate As Date, endDate As Date, monthToBeCalculated As Integer
     startDate = range("E2").Value
     endDate = range("E3").Value
+    monthToBeCalculated = Month(startDate)
 
     Set countCatalog = range("A7:A30")
     
-    Dim startingRow As Integer
-    startingRow = 7
+    Dim row As Integer, countCatalogColumn As Integer, startingPopulateAreaColumn As Integer
+    row = 7
+    countCatalogColumn = 1
+    startingPopulateAreaColumn = 6
     
-    For iRow = 1 To countCatalog.Count
-        Dim countValue As String
-        countValue = Cells(startingRow, 1).Value
-        Cells(startingRow, 6).Value = Sheet2.GetSumPerCatalogCount(countValue)
-        startingRow = startingRow + 1
-    Next iRow
+    'for how many months should I calculate values
+    Dim months As Integer
+    months = ThisWorkbook.GetContentColumnsCount + 1
+    
+    'Get range
+    'TODO: Fix it
+    Dim rng As String
+    'rng = Sheet2.CalculateRangeForAccountType(startDate, endDate)
+    rng = "B4:B28"
+    
+    For iR = 1 To months
+        For iRow = 1 To countCatalog.Count
+            
+            Dim countCatalogValue As String
+            countCatalogValue = Cells(row, countCatalogColumn).Value
+            Cells(row, startingPopulateAreaColumn).Value = Sheet2.GetSumPerAccountType(countCatalogValue, monthToBeCalculated, rng)
+            row = row + 1
+        Next iRow
+        
+        startingPopulateAreaColumn = startingPopulateAreaColumn + 1
+        row = 7
+        monthToBeCalculated = monthToBeCalculated + 1
+        
+    Next iR
     
 End Function
+

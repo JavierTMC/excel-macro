@@ -1,10 +1,47 @@
-Function GetSumPerCatalogCount(catalogCount As String) As Double
+Function CalculateRangeForAccountType(ByVal startDate As Date, ByVal endDate As Date) As String
 '
-' Method to sum all the amounts corresponding to each accountType
+' Method to calculate the range to get the sum per accountType depending on start and end dates
+'
+Dim currentDate As Date, row As Integer
+'4 is the default value where records start
+row = 4
+currentDate = range("B4")
+
+Dim initialRange As Integer, finalRange As Integer
+
+Do While currentDate <= endDate
+    If startDate >= currentDate Then
+        initialRange = row
+    End If
+    
+    If currentDate >= endDate Then
+        finalRange = row
+    End If
+    
+    row = row + 1
+    currentDate = Cells(row, 2).Value
+    
+Loop
+
+'TODO: improve this cycle to get the value and avoid this if statement
+If finalRange = 0 Then
+    finalRange = row
+End If
+
+CalculateRangeForAccountType = "B" & initialRange & ":B" & finalRange
+ 
+End Function
+
+Function GetSumPerAccountType(accountType As String, monthToBeCalculated As Integer, rng As String) As Double
+'
+' Method to sum all the amounts corresponding to each accountType for the specified month  (monthToBeCalculated)
 '
 
-    Dim rng As String
-    rng = "B4:B41"
+    'TODO: get the range of rows
+    'Dim rng As String
+    'rng = "B4:B41"
+    'rng = CalculateRangeForAccountType
+    
     Set fecha = range(rng)
     Set cuenta = range(rng)
 
@@ -21,17 +58,23 @@ Function GetSumPerCatalogCount(catalogCount As String) As Double
         cellFecha = Cells(initialRow, initialColumn).Value
         cellCuenta = Cells(initialRow, initialColumn + 1).Value
         
-        Dim amountTypeColumn As Integer
-        amountTypeColumn = 6
-        If cellCuenta = "1.1" Or cellCuenta = "1.2" Or cellCuenta = "1.3" Then
-            amountTypeColumn = 5
+        If Month(cellFecha) = monthToBeCalculated Then
+        
+            Dim amountTypeColumn As Integer
+            amountTypeColumn = 6
+            If cellCuenta = "1.1" Or cellCuenta = "1.2" Or cellCuenta = "1.3" Then
+                amountTypeColumn = 5
+            End If
+        
+            If cellCuenta = accountType Then
+                total = total + Cells(initialRow, amountTypeColumn).Value
+            End If
+            
         End If
         
-        If cellCuenta = catalogCount Then
-            total = total + Cells(initialRow, amountTypeColumn).Value
-        End If
         initialRow = initialRow + 1
     Next internalRow
     
-    GetSumPerCatalogCount = total
+    GetSumPerAccountType = total
 End Function
+
